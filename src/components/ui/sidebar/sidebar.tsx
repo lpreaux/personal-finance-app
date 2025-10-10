@@ -5,7 +5,7 @@ import Image from "next/image";
 import { cn } from "~/lib/utils";
 import { MinimizeIcon } from "~/components/icons/minimize-menu";
 import { useSidebar } from "./sidebar-context";
-import { SidebarMenuItem } from "./sidebar-menu-item";
+import { SidebarMenuItem } from "~/components/ui/sidebar/sidebar-menu-item";
 
 export function Sidebar({ children, className }: React.ComponentProps<"div">) {
   const { open, toggleSidebar } = useSidebar();

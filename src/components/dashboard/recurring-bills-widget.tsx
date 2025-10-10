@@ -6,9 +6,7 @@ interface RecurringBillsWidgetProps {
   className?: string;
 }
 
-export function RecurringBillsWidget({
-  className,
-}: RecurringBillsWidgetProps) {
+export function RecurringBillsWidget({ className }: RecurringBillsWidgetProps) {
   return (
     <Card asChild className={cn("py-6", className)}>
       <section aria-labelledby="recurring-bills-heading">

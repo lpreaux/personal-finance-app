@@ -17,10 +17,7 @@ export function BalanceCard({
   return (
     <Card
       asChild
-      className={cn(
-        variant === "dark" && "bg-gray-900 text-white",
-        className,
-      )}
+      className={cn(variant === "dark" && "bg-gray-900 text-white", className)}
     >
       <article>
         <dl>

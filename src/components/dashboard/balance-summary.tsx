@@ -20,10 +20,7 @@ export function BalanceSummary({
         Account Balance Summary
       </h2>
       <div
-        className={cn(
-          "flex flex-col gap-3",
-          "tablet:flex-row tablet:gap-6",
-        )}
+        className={cn("flex flex-col gap-3", "tablet:flex-row tablet:gap-6")}
       >
         <BalanceCard
           label="Current Balance"
