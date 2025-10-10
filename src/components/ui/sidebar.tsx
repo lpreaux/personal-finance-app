@@ -7,7 +7,6 @@ import { useIsMobile } from "~/hooks/is-mobile";
 import { cn } from "~/lib/utils";
 import { MinimizeIcon } from "../icons/minimize-menu";
 import { usePathname } from "next/navigation";
-import { Slot } from "@radix-ui/react-slot";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -19,7 +18,6 @@ const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 type SidebarContextProps = {
   state: "collapsed" | "expanded";
   open: boolean;
-  setOpen: (open: boolean) => boolean;
   isMobile: boolean;
   toggleSidebar: () => void;
 };
@@ -94,11 +92,10 @@ export function SidebarProvider({
     () => ({
       state,
       open,
-      setOpen,
       isMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, toggleSidebar],
+    [state, open, isMobile, toggleSidebar],
   );
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -209,7 +206,9 @@ export function SidebarMenuItem({
   // Auto-détection si active n'est pas fourni et que c'est un Link
   let isActive = active;
   if (asChild && active === undefined) {
-    const child = React.Children.only(children) as React.ReactElement;
+    const child = React.Children.only(children) as React.ReactElement<{
+      href?: string;
+    }>;
     if (child.props.href) {
       const href = child.props.href;
 
@@ -233,28 +232,32 @@ export function SidebarMenuItem({
   if (isMobile) {
     if (asChild) {
       const child = React.Children.only(children);
-      const clonedChild = React.cloneElement(child as React.ReactElement, {
-        className: cn(
-          "flex h-full justify-center rounded-t-lg pt-2 pb-3 align-middle text-gray-300",
-          !isActive && "group-hover:text-white",
-          isActive && "border-b-4 border-teal-800 bg-orange-100 text-gray-900",
-          className,
-        ),
-        ...props,
-        children: (
-          <>
-            <div
-              className={cn(
-                "text-gray-300 *:h-6 *:w-6 *:object-contain",
-                !isActive && "group-hover:text-white",
-                isActive && "text-teal-800",
-              )}
-            >
-              {icon}
-            </div>
-          </>
-        ),
-      });
+      const clonedChild = React.cloneElement(
+        child as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
+        {
+          className: cn(
+            "flex h-full justify-center rounded-t-lg pt-2 pb-3 align-middle text-gray-300",
+            !isActive && "group-hover:text-white",
+            isActive &&
+              "border-b-4 border-teal-800 bg-orange-100 text-gray-900",
+            className,
+          ),
+          ...props,
+          children: (
+            <>
+              <div
+                className={cn(
+                  "text-gray-300 *:h-6 *:w-6 *:object-contain",
+                  !isActive && "group-hover:text-white",
+                  isActive && "text-teal-800",
+                )}
+              >
+                {icon}
+              </div>
+            </>
+          ),
+        },
+      );
 
       return <li className="flex-grow">{clonedChild}</li>;
     }
@@ -274,39 +277,46 @@ export function SidebarMenuItem({
 
   if (asChild) {
     const child = React.Children.only(children);
-    const clonedChild = React.cloneElement(child as React.ReactElement, {
-      className: cn(
-        "group py-4 px-8 flex gap-4 align-middle text-left text-gray-300 rounded-r-xl",
-        !open && "pr-6",
-        !isActive && "hover:cursor-pointer hover:text-white",
-        isActive && "bg-orange-100 border-l-4 border-teal-800 text-gray-900",
-        (child as React.ReactElement).props.className,
-        className,
-      ),
-      ...props,
-      children: (
-        <>
-          <div
-            className={cn(
-              "h-6 w-6 text-gray-300 *:h-full *:w-full *:object-contain",
-              !isActive && "group-hover:text-white",
-              isActive && "text-teal-800",
-            )}
-          >
-            {icon}
-          </div>
+    const clonedChild = React.cloneElement(
+      child as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
+      {
+        className: cn(
+          "group py-4 px-8 flex gap-4 align-middle text-left text-gray-300 rounded-r-xl",
+          !open && "pr-6",
+          !isActive && "hover:cursor-pointer hover:text-white",
+          isActive && "bg-orange-100 border-l-4 border-teal-800 text-gray-900",
+          (child as React.ReactElement<React.HTMLAttributes<HTMLElement>>).props
+            .className ?? "",
+          className,
+        ),
+        ...props,
+        children: (
+          <>
+            <div
+              className={cn(
+                "h-6 w-6 text-gray-300 *:h-full *:w-full *:object-contain",
+                !isActive && "group-hover:text-white",
+                isActive && "text-teal-800",
+              )}
+            >
+              {icon}
+            </div>
 
-          <span
-            className={cn(
-              "block text-nowrap",
-              open ? "w-full" : "hidden w-0 overflow-hidden",
-            )}
-          >
-            {(child as React.ReactElement).props.children}
-          </span>
-        </>
-      ),
-    });
+            <span
+              className={cn(
+                "block text-nowrap",
+                open ? "w-full" : "hidden w-0 overflow-hidden",
+              )}
+            >
+              {
+                (child as React.ReactElement<React.HTMLAttributes<HTMLElement>>)
+                  .props.children
+              }
+            </span>
+          </>
+        ),
+      },
+    );
 
     return <li className="relative">{clonedChild}</li>;
   }
