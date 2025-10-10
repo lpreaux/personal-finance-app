@@ -4,57 +4,59 @@
   --font-sans:
     var(--font-public-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Centralized breakpoints - synced with src/lib/breakpoints.ts */
+  --breakpoint-tablet: 48rem; /* 768px */
+  --breakpoint-desktop: 90rem; /* 1440px */
+  --breakpoint-lg: 120rem; /* 1920px */
 }
 
-@layer utilities {
-  /* Typography Presets - Design System */
+/* Typography Presets - Design System */
+@utility text-preset-1 {
+  font-size: 2rem; /* 32px */
+  line-height: 120%;
+  letter-spacing: 0;
+  font-weight: 700;
+}
 
-  .text-preset-1 {
-    font-size: 2rem; /* 32px */
-    line-height: 120%;
-    letter-spacing: 0;
-    font-weight: 700;
-  }
+@utility text-preset-2 {
+  font-size: 1.25rem; /* 20px */
+  line-height: 120%;
+  letter-spacing: 0;
+  font-weight: 700;
+}
 
-  .text-preset-2 {
-    font-size: 1.25rem; /* 20px */
-    line-height: 120%;
-    letter-spacing: 0;
-    font-weight: 700;
-  }
+@utility text-preset-3 {
+  font-size: 1rem; /* 16px */
+  line-height: 150%;
+  letter-spacing: 0;
+  font-weight: 700;
+}
 
-  .text-preset-3 {
-    font-size: 1rem; /* 16px */
-    line-height: 150%;
-    letter-spacing: 0;
-    font-weight: 700;
-  }
+@utility text-preset-4 {
+  font-size: 0.875rem; /* 14px */
+  line-height: 150%;
+  letter-spacing: 0;
+  font-weight: 400;
+}
 
-  .text-preset-4 {
-    font-size: 0.875rem; /* 14px */
-    line-height: 150%;
-    letter-spacing: 0;
-    font-weight: 400;
-  }
+@utility text-preset-4-bold {
+  font-size: 0.875rem; /* 14px */
+  line-height: 150%;
+  letter-spacing: 0;
+  font-weight: 700;
+}
 
-  .text-preset-4-bold {
-    font-size: 0.875rem; /* 14px */
-    line-height: 150%;
-    letter-spacing: 0;
-    font-weight: 700;
-  }
+@utility text-preset-5 {
+  font-size: 0.75rem; /* 12px */
+  line-height: 150%;
+  letter-spacing: 0;
+  font-weight: 400;
+}
 
-  .text-preset-5 {
-    font-size: 0.75rem; /* 12px */
-    line-height: 150%;
-    letter-spacing: 0;
-    font-weight: 400;
-  }
-
-  .text-preset-5-bold {
-    font-size: 0.75rem; /* 12px */
-    line-height: 150%;
-    letter-spacing: 0;
-    font-weight: 700;
-  }
+@utility text-preset-5-bold {
+  font-size: 0.75rem; /* 12px */
+  line-height: 150%;
+  letter-spacing: 0;
+  font-weight: 700;
 }
