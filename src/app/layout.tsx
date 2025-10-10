@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import localFont from "next/font/local";
 import { ConvexClientProvider } from "./convex-client-provider";
 
 export const metadata: Metadata = {
@@ -11,16 +11,17 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
+const publicSans = localFont({
+  src: "../../public/fonts/PublicSans-VariableFont_wght.ttf",
+  variable: "--font-public-sans",
+  display: "swap",
 });
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en" className={`${publicSans.variable}`}>
       <body className="bg-orange-100">
         <ClerkProvider>
           <ConvexClientProvider>{children}</ConvexClientProvider>

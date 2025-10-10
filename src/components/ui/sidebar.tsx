@@ -110,7 +110,7 @@ export function SidebarProvider({
         }
         className={cn(
           "flex min-h-svh w-full",
-          isMobile && "flex-col-reverse",
+          isMobile && "relative",
           className,
         )}
         {...props}
@@ -128,7 +128,7 @@ export function Sidebar({ children, className }: React.ComponentProps<"div">) {
     return (
       <div
         className={cn(
-          "flex h-(--sidebar-height-mobile) w-full rounded-t-lg bg-gray-900 px-4 pt-2 text-white",
+          "fixed bottom-0 left-0 flex h-(--sidebar-height-mobile) w-full rounded-t-lg bg-gray-900 px-4 pt-2 text-white",
           className,
         )}
       >
@@ -143,7 +143,7 @@ export function Sidebar({ children, className }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex flex-col rounded-r-2xl bg-gray-900 text-white",
+        "fixed flex h-svh flex-col rounded-r-2xl bg-gray-900 text-white",
         open ? "w-(--sidebar-width)" : "w-(--sidebar-width-icon)",
         className,
       )}
@@ -183,7 +183,19 @@ export function Sidebar({ children, className }: React.ComponentProps<"div">) {
 }
 
 export function SidebarInset({ children }: React.ComponentProps<"div">) {
-  return <div className="flex-grow">{children}</div>;
+  const { open, isMobile } = useSidebar();
+  return (
+    <main
+      className={cn(
+        !isMobile && "flex-grow px-10 py-8",
+        !isMobile &&
+          (open ? "ml-(--sidebar-width)" : "ml-(--sidebar-width-icon)"),
+        isMobile && "mb-(--sidebar-height-mobile) w-full px-4 py-6",
+      )}
+    >
+      {children}
+    </main>
+  );
 }
 
 type MenuItemProps = React.ComponentProps<"li"> & {

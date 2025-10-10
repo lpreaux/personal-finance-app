@@ -1,6 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans:
+    var(--font-public-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@layer utilities {
+  /* Typography Presets - Design System */
+
+  .text-preset-1 {
+    font-size: 2rem; /* 32px */
+    line-height: 120%;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  .text-preset-2 {
+    font-size: 1.25rem; /* 20px */
+    line-height: 120%;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  .text-preset-3 {
+    font-size: 1rem; /* 16px */
+    line-height: 150%;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  .text-preset-4 {
+    font-size: 0.875rem; /* 14px */
+    line-height: 150%;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .text-preset-4-bold {
+    font-size: 0.875rem; /* 14px */
+    line-height: 150%;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  .text-preset-5 {
+    font-size: 0.75rem; /* 12px */
+    line-height: 150%;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .text-preset-5-bold {
+    font-size: 0.75rem; /* 12px */
+    line-height: 150%;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
 }
