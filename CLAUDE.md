@@ -4,7 +4,7 @@
 
 Full-stack personal finance management application built for Frontend Mentor challenge. Allows users to track transactions, manage budgets, create savings pots, and monitor recurring bills.
 
-**Status**: Work in Progress - Core navigation and authentication complete, feature implementation in progress
+**Status**: Work in Progress - Core navigation, authentication, and Overview page UI complete. Backend integration pending.
 
 ## Tech Stack
 
@@ -27,25 +27,54 @@ src/
 │   ├── sign-in/[[...sign-in]]/  # Clerk auth
 │   ├── dashboard/               # Protected dashboard
 │   │   ├── layout.tsx           # SidebarProvider + DashboardSidebar
-│   │   ├── page.tsx             # Overview (empty placeholder)
-│   │   ├── transactions/        # Transaction management (empty)
-│   │   ├── budgets/             # Budget management (empty)
-│   │   ├── pots/                # Savings pots (empty)
-│   │   └── recurring-bills/     # Bills tracking (empty)
+│   │   ├── page.tsx             # Overview with widgets (using mock data)
+│   │   ├── transactions/        # Transaction management (placeholder)
+│   │   ├── budgets/             # Budget management (placeholder)
+│   │   ├── pots/                # Savings pots (placeholder)
+│   │   └── recurring-bills/     # Bills tracking (placeholder)
 │   └── convex-client-provider.tsx
 ├── components/
 │   ├── ui/
-│   │   └── sidebar.tsx          # 372 lines - fully responsive sidebar
-│   ├── icons/                   # Custom SVG components
-│   │   ├── home, transactions, budgets, pots, recurring-bills, minimize-menu
+│   │   ├── sidebar/             # Modular sidebar system (10 files, ~441 lines)
+│   │   │   ├── sidebar.tsx
+│   │   │   ├── sidebar-provider.tsx
+│   │   │   ├── sidebar-context.tsx
+│   │   │   ├── sidebar-menu.tsx
+│   │   │   ├── sidebar-menu-item.tsx
+│   │   │   ├── sidebar-menu-item-icon.tsx
+│   │   │   ├── sidebar-menu-item-label.tsx
+│   │   │   ├── sidebar-inset.tsx
+│   │   │   ├── use-is-active-route.ts
+│   │   │   └── index.ts
+│   │   ├── sidebar.tsx          # Barrel export (16 lines)
+│   │   └── card.tsx             # Reusable card component
+│   ├── dashboard/               # Dashboard feature components
+│   │   ├── balance-summary.tsx  # Balance overview section
+│   │   ├── balance-card.tsx     # Individual balance card
+│   │   ├── pots-widget.tsx      # Pots summary widget (with mock data)
+│   │   ├── pot-item.tsx         # Individual pot display
+│   │   ├── transactions-widget.tsx   # Transactions widget (shell)
+│   │   ├── budget-widget.tsx    # Budget widget (shell)
+│   │   ├── recurring-bills-widget.tsx # Bills widget (shell)
+│   │   ├── section-header.tsx   # Reusable section header with link
+│   │   └── index.ts             # Barrel export
+│   ├── icons/                   # Custom SVG components (6 icons)
+│   │   ├── home.tsx
+│   │   ├── transactions.tsx
+│   │   ├── budgets.tsx
+│   │   ├── pots.tsx             # PotsIcon + PotsOutlineIcon
+│   │   ├── recurring-bills.tsx
+│   │   ├── minimize-menu.tsx
 │   │   └── index.ts
 │   └── dashboard-sidebar.tsx    # Navigation menu configuration
 ├── hooks/
-│   └── is-mobile.ts             # Mobile detection
+│   ├── is-mobile.ts             # Mobile detection (legacy)
+│   └── use-breakpoint.ts        # Modern breakpoint hooks
 ├── lib/
-│   └── utils.ts                 # cn() helper + utilities
+│   ├── utils.ts                 # cn() helper + utilities
+│   └── breakpoints.ts           # Centralized breakpoint config
 ├── styles/
-│   └── globals.css              # Tailwind v4 imports + theme
+│   └── globals.css              # Tailwind v4 + typography presets
 ├── middleware.ts                # Clerk route protection
 └── env.js                       # Environment validation
 
@@ -61,15 +90,28 @@ public/
 
 ## Key Implementation Details
 
-### Sidebar Component (`src/components/ui/sidebar.tsx`)
+### Sidebar Component (`src/components/ui/sidebar/`)
 
-**Most complex component** - 372 lines with:
-- Responsive design: completely different layouts for mobile vs desktop
-- State persistence: cookie-based (`sidebar_state`)
-- Keyboard shortcut: Cmd/Ctrl + B to toggle
-- Auto-active route detection via `usePathname()`
-- Mobile: bottom navigation bar (52px height)
-- Desktop: collapsible side panel (300px → 88px)
+**Modular sidebar system** - 10 files, ~441 total lines:
+- **Responsive design**: Completely different layouts for mobile vs desktop
+- **State persistence**: Cookie-based (`sidebar_state`)
+- **Keyboard shortcut**: Cmd/Ctrl + B to toggle
+- **Auto-active route detection**: Via `use-is-active-route.ts` hook
+- **Mobile**: Bottom navigation bar (52px height)
+- **Desktop**: Collapsible side panel (300px → 88px)
+- **Accessibility**: Full ARIA labels, keyboard navigation, screen reader support
+
+**Files**:
+- `sidebar-provider.tsx` - Context and state management
+- `sidebar-context.tsx` - Shared context definition
+- `sidebar.tsx` - Main container component
+- `sidebar-menu.tsx` - Menu wrapper
+- `sidebar-menu-item.tsx` - Individual menu items with active state
+- `sidebar-menu-item-icon.tsx` - Icon wrapper
+- `sidebar-menu-item-label.tsx` - Label with responsive visibility
+- `sidebar-inset.tsx` - Content area wrapper
+- `use-is-active-route.ts` - Route matching logic
+- `index.ts` - Barrel export
 
 **CSS Variables**:
 ```css
@@ -91,6 +133,36 @@ public/
   <SidebarInset>{children}</SidebarInset>
 </SidebarProvider>
 ```
+
+### Breakpoint System (`src/lib/breakpoints.ts`)
+
+**Centralized responsive design**:
+- Synced between Tailwind CSS and React hooks
+- Breakpoints: `mobile` (0-767px), `tablet` (768-1439px), `desktop` (1440-1919px), `lg` (1920px+)
+- Custom Tailwind screens: `tablet`, `desktop`, `lg`
+- Hooks: `useBreakpoint()` returns current breakpoint, `useMediaQuery()` for specific queries
+- Media query helpers: `aboveTablet`, `aboveDesktop`, `belowDesktop`
+
+### Typography System (`src/styles/globals.css`)
+
+**Design system presets**:
+- `text-preset-1`: 32px/120%/700 (Headings)
+- `text-preset-2`: 20px/120%/700 (Subheadings)
+- `text-preset-3`: 16px/150%/700 (Bold body)
+- `text-preset-4`: 14px/150%/400 (Body, also has `-bold` variant)
+- `text-preset-5`: 12px/150%/400 (Small text, also has `-bold` variant)
+
+### Dashboard Components (`src/components/dashboard/`)
+
+**Overview page widgets** (using mock data):
+- `balance-summary.tsx` - Displays current balance, income, and expenses
+- `balance-card.tsx` - Individual balance card with dark/light variants
+- `pots-widget.tsx` - Savings pots summary with total and individual pots
+- `pot-item.tsx` - Individual pot display with color theming
+- `transactions-widget.tsx` - Shell for recent transactions (needs backend)
+- `budget-widget.tsx` - Shell for budget summary (needs backend)
+- `recurring-bills-widget.tsx` - Shell for bills overview (needs backend)
+- `section-header.tsx` - Reusable header with "See details" link
 
 ### Styling System
 
@@ -185,52 +257,90 @@ pnpm format:write  # Format with Prettier
 - Project scaffolding with T3 stack
 - Authentication with Clerk
 - Responsive sidebar navigation (mobile + desktop)
+  - Modular 10-file architecture
+  - Cookie-based state persistence
+  - Keyboard shortcuts (Cmd/Ctrl + B)
+  - Full accessibility support
 - Dashboard routing structure
-- Icon components
+- Icon components (6 custom SVG icons)
 - TypeScript strict mode configuration
 - Environment validation
+- Centralized breakpoint system
+  - Synced between Tailwind and React hooks
+  - Custom breakpoints: mobile, tablet, desktop, lg
+  - Utility hooks: `useBreakpoint()`, `useMediaQuery()`
+- Typography design system
+  - 5 presets with variants
+  - Consistent sizing and spacing
+- Reusable UI components
+  - Card component with `asChild` pattern
+  - Section header with navigation links
+- **Overview Dashboard (UI Complete)**:
+  - ✅ Balance summary cards (current, income, expenses)
+  - ✅ Pots widget with mock data
+  - ✅ Transactions widget (shell)
+  - ✅ Budget widget (shell)
+  - ✅ Recurring bills widget (shell)
+  - ✅ Fully responsive grid layout
 
 ### 🚧 In Progress / TODO
+
+#### **Backend & Data** (Priority 1)
 - [ ] **Convex Schema**: Define tables for transactions, budgets, pots, bills
 - [ ] **Data Migration**: Move data.json content to Convex
-- [ ] **Overview Dashboard**:
-  - [ ] Balance cards (current, income, expenses)
-  - [ ] Recent transactions widget
-  - [ ] Budget summary
-  - [ ] Pots summary
-- [ ] **Transactions Page**:
-  - [ ] List view with pagination (10 per page)
-  - [ ] Search by name/category
-  - [ ] Sort by date/amount/category
-  - [ ] Filter by category/date range
-  - [ ] Add/edit/delete modals
-- [ ] **Budgets Page**:
-  - [ ] CRUD operations
-  - [ ] Progress bars with spent/remaining
-  - [ ] Latest 3 transactions per budget
-  - [ ] Category color theming
-- [ ] **Pots Page**:
-  - [ ] CRUD operations
-  - [ ] Add/withdraw money modals
-  - [ ] Progress visualization
-  - [ ] Target tracking
-- [ ] **Recurring Bills**:
-  - [ ] Monthly status view
-  - [ ] Search & sort
-  - [ ] Payment status indicators
-- [ ] **Forms**:
-  - [ ] Create reusable form components
-  - [ ] Validation with Zod
-  - [ ] Error handling
-- [ ] **Accessibility**:
-  - [ ] Full keyboard navigation
-  - [ ] Screen reader support
-  - [ ] Focus management
-- [ ] **UI Polish**:
-  - [ ] Update metadata (title/description)
-  - [ ] Loading states
-  - [ ] Error boundaries
-  - [ ] Toast notifications
+- [ ] **API Queries**: Create Convex queries for all data types
+- [ ] **API Mutations**: Create CRUD operations
+
+#### **Overview Dashboard** (Priority 2)
+- [ ] Connect balance cards to real Convex data
+- [ ] Implement transactions widget content (show latest 5)
+- [ ] Implement budget widget content (show chart/summary)
+- [ ] Implement recurring bills widget (show totals)
+
+#### **Transactions Page** (Priority 3)
+- [ ] List view with pagination (10 per page)
+- [ ] Search by name/category
+- [ ] Sort by date/amount/category
+- [ ] Filter by category/date range
+- [ ] Add/edit/delete modals
+- [ ] Transaction form with validation
+
+#### **Budgets Page** (Priority 4)
+- [ ] Budget list/grid view
+- [ ] CRUD operations
+- [ ] Progress bars with spent/remaining
+- [ ] Latest 3 transactions per budget
+- [ ] Category color theming
+- [ ] Budget chart visualization
+
+#### **Pots Page** (Priority 5)
+- [ ] Pots list/grid view
+- [ ] CRUD operations
+- [ ] Add/withdraw money modals
+- [ ] Progress visualization
+- [ ] Target tracking
+- [ ] Color theming
+
+#### **Recurring Bills** (Priority 6)
+- [ ] Bills list view
+- [ ] Monthly status view
+- [ ] Search & sort functionality
+- [ ] Payment status indicators
+- [ ] CRUD operations
+
+#### **Forms & Validation** (Ongoing)
+- [ ] Create reusable form components
+- [ ] Zod validation schemas for all entities
+- [ ] Error handling and display
+- [ ] Success feedback
+
+#### **UI Polish** (Final)
+- [ ] Update metadata (title/description per page)
+- [ ] Loading states for all data fetching
+- [ ] Error boundaries
+- [ ] Toast notifications
+- [ ] Empty states
+- [ ] Skeleton loaders
 
 ## Coding Guidelines
 
@@ -270,17 +380,26 @@ pnpm format:write  # Format with Prettier
 
 ## Important Notes
 
-1. **Sidebar is feature-complete** - avoid major refactoring unless fixing bugs
-2. **Convex schemas needed** - define before implementing CRUD operations
-3. **Mock data available** - data.json has realistic sample data for development
-4. **Figma design** - 45MB design file in root (`personal-finance-app.fig`)
-5. **Responsive first** - test mobile layout for every feature
-6. **Type safety** - all env vars validated, no unchecked index access
+1. **Sidebar is feature-complete** - modular architecture, avoid major refactoring unless fixing bugs
+2. **Overview dashboard UI complete** - all widgets have shells, some use mock data
+3. **Backend integration needed** - Convex schemas must be defined before implementing CRUD
+4. **Mock data available** - data.json has realistic sample data for development
+5. **Figma design** - 45MB design file in root (`personal-finance-app.fig`)
+6. **Responsive first** - test mobile/tablet/desktop layouts for every feature
+7. **Type safety** - all env vars validated, no unchecked index access
+8. **Accessibility built-in** - sidebar has full ARIA support, continue pattern for all components
+9. **Breakpoint system** - use centralized `breakpoints.ts` and hooks for consistency
+10. **Typography presets** - use `text-preset-*` classes for all text styling
 
 ## Git Info
 
 - **Branch**: main
-- **Recent**: Responsive sidebar implementation complete
+- **Recent commits**:
+  - `7d4f6fd` - fix: typecheck and prettier
+  - `6d5e350` - feat: improve breakpoint management and add responsiveness to overview page
+  - `cfd3da3` - feat: add content to overview page
+  - `4998b38` - switch from next lint to eslint
+  - `4d4be49` - feat: Add responsive sidebar
 
 ## Resources
 

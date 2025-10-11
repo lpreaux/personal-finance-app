@@ -1,6 +1,14 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware();
+export default clerkMiddleware(async (auth, req) => {
+  // Block /sandbox route in production
+  if (req.nextUrl.pathname.startsWith("/sandbox")) {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+  }
+});
 
 export const config = {
   matcher: [
