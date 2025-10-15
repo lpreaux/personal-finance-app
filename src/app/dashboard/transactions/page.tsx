@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { Fragment } from "react";
 import { useUser } from "@clerk/nextjs";
-import { api } from "convex/_generated/api";
-import type { Doc } from "convex/_generated/dataModel";
+import { api } from "../../../../convex/_generated/api";
+import type { Doc } from "../../../../convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 
 import { Card } from "~/components/ui/card";
