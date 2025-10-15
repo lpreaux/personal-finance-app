@@ -1,4 +1,5 @@
 import { cn } from "~/lib/utils";
+import { CarretLeftIcon, CarretRightIcon } from "../icons/carrets";
 
 interface PaginationProps {
   currentPage: number;
@@ -11,8 +12,8 @@ interface PaginationProps {
  * Classical Pagination Component
  *
  * Displays pagination controls with:
- * - First page button
- * - Last page button
+ * - Previous page button
+ * - Next page button
  * - Up to N numbered page buttons (default: 5)
  * - Smart truncation for many pages
  *
@@ -39,7 +40,7 @@ export function Pagination({
 
     const halfVisible = Math.floor(maxVisiblePages / 2);
     let startPage = Math.max(1, currentPage - halfVisible);
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
     // Adjust start if we're near the end
     if (endPage - startPage + 1 < maxVisiblePages) {
@@ -62,60 +63,64 @@ export function Pagination({
 
   return (
     <nav
-      className="flex items-center justify-center gap-2"
+      className="flex items-center justify-between gap-2 pt-6"
       role="navigation"
       aria-label="Pagination"
     >
       {/* First Page Button */}
       <button
-        onClick={() => onPageChange(1)}
+        onClick={() => onPageChange(currentPage - 1)}
         disabled={isFirstPage}
         className={cn(
-          "text-preset-4 flex h-10 min-w-10 items-center justify-center rounded-lg border-2 px-3 transition-colors",
+          "group flex h-10 min-w-10 items-center justify-center gap-4 rounded-lg p-4",
           isFirstPage
-            ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400"
-            : "border-gray-500 bg-white text-gray-900 hover:border-teal-800 hover:bg-orange-100 hover:text-teal-800",
+            ? "invisible"
+            : "bg-white text-gray-900 outline outline-stone-500 hover:bg-stone-500 hover:text-white hover:outline-none",
         )}
-        aria-label="Go to first page"
+        aria-label="Go to previous page"
       >
-        First
+        <CarretLeftIcon className="text-stone-500 group-hover:text-white" />
+        Prev
       </button>
 
       {/* Numbered Page Buttons */}
-      {visiblePages.map((pageNum) => {
-        const isActive = pageNum === currentPage;
-        return (
-          <button
-            key={pageNum}
-            onClick={() => onPageChange(pageNum)}
-            disabled={isActive}
-            className={cn(
-              "text-preset-4-bold flex h-10 min-w-10 items-center justify-center rounded-lg border-2 px-3 transition-colors",
-              isActive
-                ? "cursor-default border-teal-800 bg-teal-800 text-white"
-                : "border-gray-500 bg-white text-gray-900 hover:border-teal-800 hover:bg-orange-100 hover:text-teal-800",
-            )}
-            aria-label={`Go to page ${pageNum}`}
-            aria-current={isActive ? "page" : undefined}
-          >
-            {pageNum}
-          </button>
-        );
-      })}
+      <div className="flex gap-2">
+        {visiblePages.map((pageNum) => {
+          const isActive = pageNum === currentPage;
+          return (
+            <button
+              key={pageNum}
+              onClick={() => onPageChange(pageNum)}
+              disabled={isActive}
+              className={cn(
+                "text-preset-4 flex h-10 min-w-10 items-center justify-center rounded-lg p-4",
+                isActive
+                  ? "cursor-default bg-gray-900 text-white"
+                  : "bg-white text-gray-900 outline outline-stone-500 hover:bg-stone-500 hover:text-white hover:outline-none",
+              )}
+              aria-label={`Go to page ${pageNum}`}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+      </div>
 
       {/* Last Page Button */}
       <button
-        onClick={() => onPageChange(totalPages)}
+        onClick={() => onPageChange(currentPage + 1)}
         disabled={isLastPage}
         className={cn(
-          "text-preset-4 flex h-10 min-w-10 items-center justify-center rounded-lg border-2 px-3 transition-colors",
+          "group text-preset-4 flex h-10 min-w-10 items-center justify-center gap-4 rounded-lg p-4",
           isLastPage
-            ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400"
-            : "border-gray-500 bg-white text-gray-900 hover:border-teal-800 hover:bg-orange-100 hover:text-teal-800",
+            ? "invisible"
+            : "bg-white text-gray-900 outline outline-stone-500 hover:bg-stone-500 hover:text-white hover:outline-none",
         )}
-        aria-label="Go to last page"
+        aria-label="Go to next page"
       >
-        Last
+        Next
+        <CarretRightIcon className="text-stone-500 group-hover:text-white" />
       </button>
     </nav>
   );
