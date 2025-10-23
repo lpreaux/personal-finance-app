@@ -14,8 +14,10 @@ export default function DashboardLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <SidebarProvider>
-      <DashboardSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <div className="flex min-h-screen">
+        <DashboardSidebar />
+        <SidebarInset>{children}</SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }

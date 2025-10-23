@@ -14,7 +14,7 @@ type MenuItemProps = React.ComponentProps<"li"> & {
 };
 
 /**
- * Generates CSS classes for menu item based on active state
+ * Génère les classes CSS d’un item de menu selon son état actif et l’ouverture du sidebar.
  */
 function getMenuItemClasses(isActive: boolean, open: boolean): string {
   return cn(
@@ -46,21 +46,16 @@ export function SidebarMenuItem({
 }: MenuItemProps) {
   const { open } = useSidebar();
 
-  // Auto-detect active state for Link components
-  const href = asChild
-    ? (React.Children.only(children) as React.ReactElement<{ href?: string }>)
-        ?.props.href
-    : undefined;
+  // ✅ Récupère le premier enfant de manière sûre (tolérante)
+  const safeChild = React.Children.toArray(children)[0] as
+    | React.ReactElement<{ href?: string; children?: React.ReactNode }>
+    | undefined;
+
+  const href = asChild ? safeChild?.props.href : undefined;
   const autoActive = useIsActiveRoute(href);
   const isActive = active ?? autoActive;
 
-  const labelContent = asChild
-    ? (
-        React.Children.only(children) as React.ReactElement<{
-          children?: React.ReactNode;
-        }>
-      ).props.children
-    : children;
+  const labelContent = asChild ? safeChild?.props.children : children;
 
   const content = (
     <>
@@ -69,15 +64,13 @@ export function SidebarMenuItem({
     </>
   );
 
-  if (asChild) {
-    const child = React.Children.only(children);
+  if (asChild && safeChild) {
     const clonedChild = React.cloneElement(
-      child as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
+      safeChild as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
       {
         className: cn(
           getMenuItemClasses(isActive, open),
-          (child as React.ReactElement<React.HTMLAttributes<HTMLElement>>).props
-            .className ?? "",
+          safeChild.props.className ?? "",
           className,
         ),
         ...props,
